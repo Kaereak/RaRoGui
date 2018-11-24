@@ -54,9 +54,9 @@ public class RentManagementImplements implements RentManagement {
 
 
     public String toString() {
-        return rentedCars.entrySet().stream().map(data -> "{" + data.getKey().toString() + " " + data.getValue().toString() + "}")
-                .reduce((data1, data2) -> data1 + data2 + "\n").get() +
-                requests.entrySet().stream().map(data -> "{" + data.getKey().toString() + " " + data.getValue().toString() + "}")
+        return "Voitures en location : " + rentedCars.entrySet().stream().map(data -> "{" + data.getKey().toString() + " " + data.getValue().toString() + "}")
+                .reduce((data1, data2) -> data1 + data2 + "\n").get() +'\n'+
+                "Liste des requetes : " + requests.entrySet().stream().map(data -> "{" + data.getKey().toString() + " " + data.getValue().toString() + "}")
                         .reduce((data1, data2) -> data1 + data2 + "\n").get();
     }
 
