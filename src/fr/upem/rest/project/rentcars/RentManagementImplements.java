@@ -9,17 +9,17 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
-public class RentManagement {
+public class RentManagementImplements implements RentManagement {
 
     /*map pour les locations et gestions de requetes*/
     private Map<Car, Queue<Request>> requests = new HashMap<>();
     private Map<Car, Request> rentedCars = new HashMap<>();
 
-    public RentManagement(Garages garage) throws RemoteException {
-        garage.getList().stream().map(car -> this.requests.put(car, new LinkedBlockingQueue<>()));
+    public RentManagementImplements(Garages garage) throws RemoteException {
+        garage.getList().stream().forEach(car -> this.requests.put(car, new LinkedBlockingQueue<>()));
     }
 
-    private void addRequest(Car c, Request request) {
+    public void addRequest(Car c, Request request) {
         if (requests.containsKey(c)) {
             requests.get(c).add(request);
         } else {
@@ -27,17 +27,18 @@ public class RentManagement {
         }
     }
 
-    private void deleteRequest(Car car, Request r) {
+    public void deleteRequest(Car car, Request r) {
         requests.get(car).remove(r);
     }
 
 
-    private void finishRent(Car car){
+    public void finishRent(Car car) {
         rentedCars.get(car).setStatus(RequestStatus.TERMINATED);
     }
 
-    private void attributeCar() {
+    public void attributeCar() {
         this.requests.entrySet().stream().filter(data -> !rentedCars.containsKey(data.getKey()))
+                .filter(data -> data.getValue().size() > 0)
                 .forEach(data -> {
                     Request r = data.getValue().poll();
                     r.setStatus(RequestStatus.VALIDATED);
@@ -52,11 +53,11 @@ public class RentManagement {
     }
 
 
-    public String toString(){
-         return rentedCars.entrySet().stream().map(data -> "{"+data.getKey().toString()+" "+data.getValue().toString()+"}")
-                .reduce((data1,data2) -> data1+data2+"\n").get()
-                 + requests.entrySet().stream().map(data -> "{"+data.getKey().toString()+" "+data.getValue().toString()+"}")
-                 .reduce((data1,data2) -> data1+data2+"\n").get();
+    public String toString() {
+        return rentedCars.entrySet().stream().map(data -> "{" + data.getKey().toString() + " " + data.getValue().toString() + "}")
+                .reduce((data1, data2) -> data1 + data2 + "\n").get() +
+                requests.entrySet().stream().map(data -> "{" + data.getKey().toString() + " " + data.getValue().toString() + "}")
+                        .reduce((data1, data2) -> data1 + data2 + "\n").get();
     }
 
 }

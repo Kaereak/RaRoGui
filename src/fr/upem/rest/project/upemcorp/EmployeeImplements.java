@@ -43,4 +43,8 @@ public class EmployeeImplements extends UnicastRemoteObject implements Employee 
 		return service;
 	}
 
+	public String toString(){
+		return id  + " " + lastName + " " + firstName;
+	}
+
 }

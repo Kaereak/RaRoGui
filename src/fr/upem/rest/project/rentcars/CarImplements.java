@@ -3,51 +3,28 @@ package fr.upem.rest.project.rentcars;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @SuppressWarnings("serial")
-public class CarImplements extends UnicastRemoteObject implements Car {
-	
+public class CarImplements implements Car {
+
+	private final String matriculeCar;
 	private final String brand;
-	private final String id;
 	private final String model;
 	private final int nbDoors;
 	private List<Rate> rate = new ArrayList<>();
 	private int state;
-	private boolean available;
-	private int employeeIdForRent;
 
 	public CarImplements(String brand, String model, String id, int state, int nbDoors) throws RemoteException {
-		super();
 		if((state < 0 || state > 5) && (nbDoors < 0 || nbDoors > 5)){
 			throw new IllegalArgumentException();
 		}
-		
-		this.state = state;
 		this.brand = brand;
+		this.state = state;
 		this.model = model;
-		this.id = id;
-		available = true;
+		this.matriculeCar = id;
 		this.nbDoors = nbDoors;
-	}
-	
-	public boolean rent(int employeeId){
-		if(!available){
-			return false;
-		}
-
-		employeeIdForRent = employeeId;
-		available = false;
-		
-		return true;
-	}
-	
-	public void returnsCar(int points, String comment) throws RemoteException{
-		addRate(employeeIdForRent, points, comment);
-		available = true;
 	}
 	
 	public void addRate(int idEmployee, int points, String comment) throws RemoteException {
@@ -68,16 +45,12 @@ public class CarImplements extends UnicastRemoteObject implements Car {
 		return nbDoors;
 	}
 
-	public String getBrand() throws RemoteException {
-		return brand;
-	}
-
 	public String getModel() throws RemoteException {
 		return model;
 	}
 
-	public String getId() throws RemoteException {
-		return id;
+	public String getMatriculeCar() throws RemoteException {
+		return matriculeCar;
 	}
 
 	public List<Rate> getRate() throws RemoteException {
@@ -88,20 +61,21 @@ public class CarImplements extends UnicastRemoteObject implements Car {
 		return state;
 	}
 
-	public void setRent(boolean rent) throws RemoteException {
-		this.available = rent;
+	public String toString(){
+		return matriculeCar + " " + brand + " " + model + " " + "Nb doors : " + nbDoors;
 	}
 
-	public boolean getRent() throws RemoteException {
-		return available;
-	}
+	@Override
+	public boolean equals(Object o) {
+		if (o == null) return false;
 
-	public void setEmployeeID(int employeeID) throws RemoteException {
-		this.employeeIdForRent = employeeID;
-	}
+		CarImplements c = (CarImplements) o;
 
-	public int getEmployeeID() throws RemoteException {
-		return employeeIdForRent;
+		return (this.model).equals(c.model)
+				&& (this.matriculeCar).equals(c.matriculeCar)
+				&& this.nbDoors == c.nbDoors
+				&& this.state == c.state
+				&& (this.brand).equals(c.brand);
 	}
 
 

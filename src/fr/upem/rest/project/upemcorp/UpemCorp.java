@@ -14,7 +14,7 @@ public class UpemCorp {
 
 	public UpemCorp() throws RemoteException{
 		/*Set de test*/
-		EmployeeImplements rara = new EmployeeImplements(1, "Rara", "Rarara", 3, "Chocolat");
+		EmployeeImplements rara = new EmployeeImplements(0, "Rara", "Rarara", 3, "Chocolat");
 		EmployeeImplements rosa = new EmployeeImplements(2, "Rosa", "Cuit", 12, "Marshmallow");
 		EmployeeImplements guigui = new EmployeeImplements(1, "Guigui", "Gras Silva", 3, "Bobun");
 		
