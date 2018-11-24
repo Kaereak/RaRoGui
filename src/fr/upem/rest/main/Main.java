@@ -20,5 +20,14 @@ public class Main {
 
         managementFrance.attributeCar();
         System.out.println(managementFrance);
+
+        managementFrance.retrieveRentedCar();
+
+        managementFrance.finishRent(garageFr.searchCarByNbDoors(2).get(0));
+        System.out.println(managementFrance);
+
+        managementFrance.retrieveRentedCar();
+
+
     }
 }

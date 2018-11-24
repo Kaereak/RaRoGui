@@ -46,6 +46,7 @@ public class RentManagementImplements implements RentManagement {
                 });
     }
 
+    /*Garde que les voitures non terminées*/
     public void retrieveRentedCar() {
         rentedCars = rentedCars.entrySet().stream()
                 .filter(data -> data.getValue().getStatus() != RequestStatus.TERMINATED)
