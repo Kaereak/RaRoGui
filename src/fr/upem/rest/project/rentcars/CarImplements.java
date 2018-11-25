@@ -15,8 +15,9 @@ public class CarImplements implements Car {
 	private final int nbDoors;
 	private List<Rate> rate = new ArrayList<>();
 	private int state;
+	private int price;
 
-	public CarImplements(String brand, String model, String id, int state, int nbDoors) throws RemoteException {
+	public CarImplements(String brand, String model, String id, int state, int nbDoors, int price) throws RemoteException {
 		if((state < 0 || state > 5) && (nbDoors < 0 || nbDoors > 5)){
 			throw new IllegalArgumentException();
 		}
@@ -25,6 +26,7 @@ public class CarImplements implements Car {
 		this.model = model;
 		this.matriculeCar = id;
 		this.nbDoors = nbDoors;
+		this.price = price;
 	}
 	
 	public void addRate(int idEmployee, int points, String comment) throws RemoteException {
@@ -59,6 +61,13 @@ public class CarImplements implements Car {
 
 	public int getState() throws RemoteException {
 		return state;
+	}
+
+	public void setPrice(int price){
+		this.price = price;
+	}
+	public int getPrice(){
+		return price;
 	}
 
 	public String toString(){

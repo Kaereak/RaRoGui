@@ -10,29 +10,36 @@ import fr.upem.rest.project.rentcars.CarImplements;
 
 public class UpemCorp {
 	
-	private HashMap<Integer, Employee> mapEmployees = new HashMap(); 
+	private Map<Integer, Employee> mapEmployees = new HashMap();
 
 	public UpemCorp() throws RemoteException{
 		/*Set de test*/
-		EmployeeImplements rara = new EmployeeImplements(0, "Rara", "Rarara", 3, "Chocolat");
-		EmployeeImplements rosa = new EmployeeImplements(2, "Rosa", "Cuit", 12, "Marshmallow");
-		EmployeeImplements guigui = new EmployeeImplements(1, "Guigui", "Gras Silva", 3, "Bobun");
+		Employee emp0 = new EmployeeImplements(0, "Dupont", "Michel", 55, "RH");
+		Employee emp1 = new EmployeeImplements(1, "Martin", "Pauline", 25, "Logistique");
+		Employee emp2 = new EmployeeImplements(2, "Patin", "Patrick", 41, "Achat");
+		Employee emp3 = new EmployeeImplements(3, "Bonaparte", "Napoleon", 33, "Invasion");
 		
-		addEmployee(rara);
-		addEmployee(rosa);
-		addEmployee(guigui);
+		addEmployee(emp0);
+		addEmployee(emp1);
+		addEmployee(emp2);
+		addEmployee(emp3);
+
 		
 	}
 	
-	public void addEmployee(EmployeeImplements e){
+	public void addEmployee(Employee e){
 		mapEmployees.put(Objects.requireNonNull(e.getId()), Objects.requireNonNull(e));
 	}
 	
-	public void removeEmployee(EmployeeImplements e){
+	public void removeEmployee(Employee e){
 		mapEmployees.remove(Objects.requireNonNull(e.getId()));
 	}
 	
 	public Employee getEmployee(int id){
 		return mapEmployees.get(id);
+	}
+
+	public Map<Integer, Employee> getMapEmployee(){
+		return mapEmployees;
 	}
 }

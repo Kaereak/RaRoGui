@@ -16,7 +16,7 @@ public interface Garages extends Remote {
 
     List<Car> searchCarByNbDoors(int nbDoors);
 
-    void removeCar(CarImplements car) throws RemoteException;
+    void removeCar(Car car);
 
     List<Car> getList();
 }

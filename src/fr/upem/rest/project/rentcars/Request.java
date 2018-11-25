@@ -38,6 +38,10 @@ public class Request {
 		this.status = status;
 	}
 
+	public Employee getEmployee(){
+		return employee;
+	}
+
 	@Override
 	public String toString(){
 		return employee + " " + date + " " + status;

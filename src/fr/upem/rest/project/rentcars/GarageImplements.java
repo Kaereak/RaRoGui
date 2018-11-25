@@ -12,9 +12,14 @@ public class GarageImplements implements Garages {
     private List<Car> listCars = new ArrayList<>();
 
     public GarageImplements() throws RemoteException {
-        listCars.add(new CarImplements("Toyoto", "Yarus", "MFZEFE558", 4, 2));
-        listCars.add(new CarImplements("Wolfsvagounne", "Goulfe", "ZFEJOZEP", 3, 5));
-        listCars.add(new CarImplements("Teslo", "5", "5ZEFZLP98", 5, 5));
+        addCar(new CarImplements("Toyota", "Prius", "DF-047-RD", 8, 5, 10000));
+        addCar(new CarImplements("Renault", "Capture", "MD-058-DP", 6, 5, 10000));
+        addCar(new CarImplements("Toyota", "Prius", "PL-858-LQ", 9, 5, 10000));
+        addCar(new CarImplements("Hyundai", "Kona", "PM-200-AF", 8, 3, 10000));
+        addCar(new CarImplements("Renault", "Megane", "MO-545-XD", 5, 3, 10000));
+        addCar(new CarImplements("Opel", "Zafira", "LO-988-AQ", 8, 5, 10000));
+        addCar(new CarImplements("Citroen", "C4", "AX-480-AX", 6, 3, 10000));
+
     }
 
     public List<Car> searchCar(Predicate<Car> condition) {
@@ -49,7 +54,7 @@ public class GarageImplements implements Garages {
         return listCars;
     }
 
-    public void removeCar(CarImplements car) throws RemoteException {
+    public void removeCar(Car car) {
         listCars.remove(car);
     }
 

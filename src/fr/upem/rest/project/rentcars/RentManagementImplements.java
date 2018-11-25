@@ -2,18 +2,18 @@ package fr.upem.rest.project.rentcars;
 
 import fr.upem.rest.project.upemcorp.Employee;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
-public class RentManagementImplements implements RentManagement {
+public class RentManagementImplements implements RentManagement, Remote {
 
     /*map pour les locations et gestions de requetes*/
     private Map<Car, Queue<Request>> requests = new HashMap<>();
     private Map<Car, Request> rentedCars = new HashMap<>();
+    private Set<Car> carsRentedAtLeastOneTime = new HashSet<>();
 
     public RentManagementImplements(Garages garage) throws RemoteException {
         garage.getList().stream().forEach(car -> this.requests.put(car, new LinkedBlockingQueue<>()));
@@ -31,7 +31,6 @@ public class RentManagementImplements implements RentManagement {
         requests.get(car).remove(r);
     }
 
-
     public void finishRent(Car car) {
         rentedCars.get(car).setStatus(RequestStatus.TERMINATED);
     }
@@ -43,6 +42,7 @@ public class RentManagementImplements implements RentManagement {
                     Request r = data.getValue().poll();
                     r.setStatus(RequestStatus.VALIDATED);
                     rentedCars.put(data.getKey(), r);
+                    carsRentedAtLeastOneTime.add(data.getKey());
                 });
     }
 
@@ -59,6 +59,10 @@ public class RentManagementImplements implements RentManagement {
                 .reduce((data1, data2) -> data1 + data2 + "\n").get() +'\n'+
                 "Liste des requetes : " + requests.entrySet().stream().map(data -> "{" + data.getKey().toString() + " " + data.getValue().toString() + "}")
                         .reduce((data1, data2) -> data1 + data2 + "\n").get();
+    }
+
+    public List<Car> getCarsRentedAtLeastOneTime(){
+        return new ArrayList<>(getCarsRentedAtLeastOneTime());
     }
 
 }

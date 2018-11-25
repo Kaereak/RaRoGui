@@ -15,4 +15,5 @@ public interface Car extends Remote {
 	List<Rate> getRate() throws RemoteException;
 	int getState() throws RemoteException;
 
+    int getPrice();
 }
