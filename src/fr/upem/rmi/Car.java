@@ -11,8 +11,11 @@ public interface Car extends Remote {
 	public String getModel() throws RemoteException;
 	public String getMatriculeCar() throws RemoteException;
 	public List<Rates> getRate() throws RemoteException;
+	public double averageRate() throws RemoteException;
 	public int getState() throws RemoteException;
 	public String getBrand() throws RemoteException;
 	public boolean getRented() throws RemoteException;
 	public void setRented(boolean rented) throws RemoteException;
+    public int getPriceRent() throws RemoteException;
+    public int getPriceSell() throws RemoteException;
 }

@@ -2,18 +2,17 @@ package fr.upem.rmi;
 
 import org.json.JSONObject;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.List;
 
 @Path("/api")
 public class Api {
+
     @Path("/user")
-    // @Path("/user?email={email}&password={password}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     /* MARCHE PAAAS */
@@ -55,5 +54,33 @@ public class Api {
     @Produces("text/html")
     public String getHello() {
         return "API";
+    }
+
+    @Path("/cars")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCars() throws RemoteException {
+        UPEMCorp_Impl upem = new UPEMCorp_Impl();
+        Garages garage = upem.getGarage();
+        List<Car> cars = garage.getList();
+        JSONArray json = new JSONArray();
+        for (Car car: cars) {
+            JSONObject carJson = new JSONObject();
+            carJson.put("brand", car.getBrand());
+            carJson.put("model", car.getModel());
+            carJson.put("nbDoors", car.getNbDoors());
+            carJson.put("rate", car.averageRate());
+            carJson.put("state", car.getState());
+            carJson.put("rented", car.getRented());
+            carJson.put("priceRent", car.getPriceRent());
+            json.put(carJson);
+        }
+        return Response.status(Response.Status.OK)
+                .entity(json.toString())
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                .build();
+
+
     }
 }
