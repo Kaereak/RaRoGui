@@ -3,7 +3,6 @@ package fr.upem.rmi;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-@SuppressWarnings("serial")
 public class ObserverImplements extends UnicastRemoteObject implements Observer {
 
 	public ObserverImplements() throws RemoteException {

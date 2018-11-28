@@ -20,7 +20,6 @@ public class RentalCars {
     public InputStream getFile(@PathParam("path") String path) {
         try {
             String base = servletContext.getRealPath("/include");
-            System.out.println(base);
             File f = new File(String.format("%s/%s", base, path));
             return new FileInputStream(f);
         } catch (FileNotFoundException e) {

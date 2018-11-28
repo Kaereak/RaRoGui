@@ -12,6 +12,12 @@ import java.util.List;
 @Path("/api")
 public class Api {
 
+    private UPEMCorp_Impl upem;
+
+    public Api() {
+        this.upem = new UPEMCorp_Impl();
+    }
+
     @Path("/user")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -60,9 +66,10 @@ public class Api {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCars() throws RemoteException {
-        UPEMCorp_Impl upem = new UPEMCorp_Impl();
         Garages garage = upem.getGarage();
         List<Car> cars = garage.getList();
+        RentManagement rent = upem.getRent();
+
         JSONArray json = new JSONArray();
         for (Car car: cars) {
             JSONObject carJson = new JSONObject();
@@ -71,16 +78,45 @@ public class Api {
             carJson.put("nbDoors", car.getNbDoors());
             carJson.put("rate", car.averageRate());
             carJson.put("state", car.getState());
-            carJson.put("rented", car.getRented());
             carJson.put("priceRent", car.getPriceRent());
+            carJson.put("nbRequester", rent.howLongQueue(car.getMatriculeCar()));
+            carJson.put("rented", car.getRented());
+            carJson.put("id", car.getMatriculeCar());
             json.put(carJson);
         }
-        return Response.status(Response.Status.OK)
-                .entity(json.toString())
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .build();
+        return Response.status(Response.Status.OK).entity(json.toString()).build();
+    }
+
+    @Path("/rent-car")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addUserToQueue(String data) throws RemoteException {
+        JSONObject received = new JSONObject(data);
+        JSONObject toSend = new JSONObject();
+        RentManagement rent = upem.getRent();
+        Garages garage = upem.getGarage();
+        String carID;
+        int userID;
+        try {
+            carID = received.getString("carID");
+            userID = received.getInt("userID");
+        } catch(JSONException e) {
+            return Response.status(422).entity(new JSONObject().toString()).build();
+        }
+        Car car = garage.searchCarByID(carID);
+        Employee employee = upem.getMap().get(userID);
+        Requests request = rent.createRequest(employee, new ObserverImplements());
+        boolean res = rent.addRequest(car, request);
+        System.out.println("addRequest: " + res);
+        if (!res) return Response.status(422).entity(new JSONObject().toString()).build();
 
 
+        int sizeQueue = rent.howLongQueue(carID);
+        System.out.println("sizeQueue: " + sizeQueue);
+        toSend.put("rentStatus", request.getStatus());
+        toSend.put("rentQueuePosition", sizeQueue);
+
+        return Response.status(Response.Status.OK).entity(toSend.toString()).build();
     }
 }
