@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.util.List;
 
 public class RentCars_Impl {
 	public static void main(String[] args) {
@@ -32,6 +33,66 @@ public class RentCars_Impl {
 			RentManagementImplements rent = new RentManagementImplements(garage);
 			
 			Naming.rebind("Rent", rent);
+
+			// EXPORT EMPLOYEE
+
+			EmployeeManagement map = new EmployeeManagementImpl();
+
+            Employee emp0 = new EmployeeImplements(
+                    0,
+                    "Dupont",
+                    "Michel",
+                    55,
+                    "RH",
+                    "dupont@gmail.com",
+                    "dupont"
+            );
+            Employee emp1 = new EmployeeImplements(
+                    1,
+                    "Martin",
+                    "Pauline",
+                    25,
+                    "Logistique",
+                    "martin@gmail.com",
+                    "martin"
+            );
+            Employee emp2 = new EmployeeImplements(
+                    2,
+                    "Patin",
+                    "Patrick",
+                    41,
+                    "Achat",
+                    "patin@gmail.com",
+                    "patin"
+            );
+            Employee emp3 = new EmployeeImplements(
+                    3,
+                    "Bonaparte",
+                    "Napoleon",
+                    33,
+                    "Invasion",
+                    "bonaparte@gmail.com",
+                    "bonapart"
+            );
+
+            map.addEmployee(emp0.getId(), emp0);
+            map.addEmployee(emp1.getId(), emp1);
+            map.addEmployee(emp2.getId(), emp2);
+            map.addEmployee(emp3.getId(), emp3);
+
+            Observer obs = new ObserverImplements();
+            List<Car> list = garage.searchCarByNbDoors(3);
+            rent.addRequest(list.get(1), rent.createRequest(emp0, obs));
+            rent.addRequest(list.get(0), rent.createRequest(emp1, obs));
+            rent.addRequest(list.get(1), rent.createRequest(emp2, obs));
+            rent.addRequest(list.get(1), rent.createRequest(emp3, obs));
+
+            rent.finishRent(list.get(1));
+
+            Naming.rebind("Employee", map);
+
+
+
 		} catch (RemoteException | MalformedURLException e) {
 			System.out.println("Dead:"+e);
 		}

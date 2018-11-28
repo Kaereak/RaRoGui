@@ -14,4 +14,6 @@ public interface Garages extends Remote {
     public List<Car> searchCarByNbDoors(int nbDoors) throws RemoteException;
 
     public List<Car> getList() throws RemoteException;
+
+    public Car searchCarByID(String id) throws RemoteException;
 }

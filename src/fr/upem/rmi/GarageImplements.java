@@ -57,6 +57,18 @@ public class GarageImplements extends UnicastRemoteObject implements Garages {
 		return listCars;
 	}
 
+	@Override
+	public Car searchCarByID(String id) throws RemoteException {
+		return listCars.stream().filter(data -> {
+			try {
+				return data.getMatriculeCar().equals(id);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}).findAny().orElse(null);
+	}
+
 	public void removeCar(CarImplements car) {
 		listCars.remove(car);
 	}
