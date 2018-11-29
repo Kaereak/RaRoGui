@@ -72,7 +72,7 @@ public class RentCars_Impl {
                     33,
                     "Invasion",
                     "bonaparte@gmail.com",
-                    "bonapart"
+                    "bonaparte"
             );
 
             map.addEmployee(emp0.getId(), emp0);

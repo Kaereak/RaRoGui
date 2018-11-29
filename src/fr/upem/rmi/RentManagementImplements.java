@@ -2,9 +2,7 @@ package fr.upem.rmi;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
@@ -15,6 +13,7 @@ public class RentManagementImplements extends UnicastRemoteObject implements Ren
     private final Map<String, Queue<Requests>> requests = new HashMap<>();
     private Map<String, Requests> rentedCars = new HashMap<>();
     private final Map<String, Car> mapCars = new HashMap<>();
+    private Set<Car> carsRentedAtLeastOneTime = new HashSet<>();
 
     public RentManagementImplements(Garages garage) throws RemoteException {
         garage.getList().stream().forEach(car -> {
@@ -47,7 +46,7 @@ public class RentManagementImplements extends UnicastRemoteObject implements Ren
             return false;
         }
 
-        if(rentedCars.entrySet()
+        if (rentedCars.entrySet()
                 .stream()
                 .anyMatch(data -> {
                     try {
@@ -82,6 +81,7 @@ public class RentManagementImplements extends UnicastRemoteObject implements Ren
     @Override
     public void finishRent(Car car) throws RemoteException {
         rentedCars.get(car.getMatriculeCar()).setStatus(Requests.RequestStatus.TERMINATED);
+        rentedCars.remove(car.getMatriculeCar());
         mapCars.get(car.getMatriculeCar()).setRented(false);
         attributeCar();
     }
@@ -106,6 +106,7 @@ public class RentManagementImplements extends UnicastRemoteObject implements Ren
                         return;
                     }
                     rentedCars.put(data.getKey(), r);
+                    carsRentedAtLeastOneTime.add(mapCars.get(data.getKey()));
                     try {
                         mapCars.get(data.getKey()).setRented(true);
                         r.notifyObserver(data.getKey());
@@ -136,6 +137,17 @@ public class RentManagementImplements extends UnicastRemoteObject implements Ren
     @Override
     public int howLongQueue(String car) throws RemoteException {
         return requests.get(car).size();
+    }
+
+    @Override
+    public Map<String, Requests> carsRequested(int employeeId) throws RemoteException {
+        return rentedCars.entrySet().stream().filter(data -> {
+            try {
+                return data.getValue().getEmployee() == employeeId;
+            } catch (RemoteException e) {
+            }
+            return false;
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
