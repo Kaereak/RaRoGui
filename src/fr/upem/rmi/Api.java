@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Path("/api")
 public class Api {
@@ -16,6 +17,20 @@ public class Api {
 
     public Api() {
         this.upem = new UPEMCorp_Impl();
+    }
+
+    public JSONObject CarToJson(Car car) throws RemoteException {
+        JSONObject carJson = new JSONObject();
+        carJson.put("brand", car.getBrand());
+        carJson.put("model", car.getModel());
+        carJson.put("nbDoors", car.getNbDoors());
+        carJson.put("rate", car.averageRate());
+        carJson.put("state", car.getState());
+        carJson.put("priceRent", car.getPriceRent());
+        carJson.put("nbRequester", this.upem.getRent().howLongQueue(car.getMatriculeCar()));
+        carJson.put("rented", car.getRented());
+        carJson.put("id", car.getMatriculeCar());
+        return carJson;
     }
 
     @Path("/user")
@@ -72,17 +87,7 @@ public class Api {
 
         JSONArray json = new JSONArray();
         for (Car car: cars) {
-            JSONObject carJson = new JSONObject();
-            carJson.put("brand", car.getBrand());
-            carJson.put("model", car.getModel());
-            carJson.put("nbDoors", car.getNbDoors());
-            carJson.put("rate", car.averageRate());
-            carJson.put("state", car.getState());
-            carJson.put("priceRent", car.getPriceRent());
-            carJson.put("nbRequester", rent.howLongQueue(car.getMatriculeCar()));
-            carJson.put("rented", car.getRented());
-            carJson.put("id", car.getMatriculeCar());
-            json.put(carJson);
+            json.put(CarToJson(car));
         }
         return Response.status(Response.Status.OK).entity(json.toString()).build();
     }
@@ -119,4 +124,40 @@ public class Api {
 
         return Response.status(Response.Status.OK).entity(toSend.toString()).build();
     }
+
+    @Path("/user-requests")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRentedCarsByUser(@QueryParam("userID") int userID) throws RemoteException {
+        RentManagement rent = this.upem.getRent();
+        Garages garage = this.upem.getGarage();
+        JSONArray toSend = new JSONArray();
+
+        Map<String, Requests> requests = rent.carsRequested(userID);
+        requests.forEach((key, r) -> {
+            JSONObject json = new JSONObject();
+            try {
+                Car car = garage.searchCarByID(key);
+                json.put("car", CarToJson(car));
+                json.put("status", r.getStatus());
+            } catch (RemoteException e) {
+            }
+            toSend.put(json);
+        });
+        return Response.status(200).entity(toSend.toString()).build();
+    }
+
+    @Path("/end-rent")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public  Response setCarFinish(@QueryParam("carID") String carID) throws RemoteException {
+        RentManagement rent = this.upem.getRent();
+        Garages garage = this.upem.getGarage();
+        Car car = garage.searchCarByID(carID);
+        rent.finishRent(car);
+        JSONObject toSend = new JSONObject();
+        toSend.put("result", true);
+        return Response.status(200).entity(toSend.toString()).build();
+    }
+
 }
